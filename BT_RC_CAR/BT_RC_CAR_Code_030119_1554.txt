@@ -1,0 +1,92 @@
+/*
+ * BT_RC_CAR.cpp
+ *
+ * Created: 02-01-2019 15:04:53
+ * Author : CS
+ */ 
+
+#define F_CPU 16000000UL
+#include <avr/io.h>
+#include <util/delay.h>
+//#include "uart0.h"
+/*
+#include "lcd.h"
+#define LCD_CMD_DDR DDRA
+#define LCD_DATA_DDR DDRA
+#define LCD_CMD_PORT PORTA
+#define LCD_DATA_PORT PORTA
+#define LCD_RS 0
+#define LCD_EN 1
+#define LCD_D4 4
+#define LCD_D5 5
+#define LCD_D6 6
+#define LCD_D7 7
+*/
+void uart_init(int a)
+{
+	UBRRL = a;
+	UBRRH = a<<8;
+	UCSRB = (1<<TXEN) | (1<<RXEN);
+	UCSRC = (1<<URSEL) | (1<<UCSZ1) | (1<<UCSZ0);
+}
+
+void uart_tx(char a)
+{
+	UDR = a;
+	while ((UCSRA&0x40)==0x00);
+}
+
+char uart_rx()
+{
+	while((UCSRA&0x80)==0x00);
+	return UDR;
+}
+
+int main(void)
+{
+	/*
+	LCD4BIT lcd;
+	DDRB = 0xFF;
+	lcd.initLCD();
+	*/
+	DDRB = 0xFF;
+	uart_init(103);
+	int ch = '\0';
+	//uart_tx('h');
+	while (1) 
+    {
+		/*
+		PORTA ^= (1<<2) | (1<<3);
+		lcd.setCursorAt(0,0);
+		lcd.writeString("Hello World!");
+		PORTB ^= (1<<4) + (0<<5);
+		_delay_ms(1000);
+		PORTB ^= (1<<4) + (0<<5);
+		_delay_ms(1000);
+		PORTB ^= (0<<4) + (1<<5);
+		_delay_ms(1000);
+		PORTB ^= (0<<4) + (1<<5);
+		_delay_ms(1000);
+		lcd.clearLCD();
+		PORTA = PORTB = 0x00;
+		_delay_ms(1000);
+		*/
+		ch = uart_rx();
+		_delay_ms(500);
+		if (ch == '1')
+		{
+			PORTB = 0xFF;
+		}
+		if (ch == '2')
+		{
+			PORTB = 0xF8 + 4;
+		}
+		else
+		{
+			PORTB = 0x00;
+		}
+		_delay_ms(1000);
+		PORTB = 0x00;
+		ch = '0';		
+    }
+}
