@@ -10,7 +10,7 @@
 
 int main(void)
 {
-    DDRB = 0b11111111;
+    DDRB = 1 + 2 + 4 + 8 + 16 + 32 + 64;
     while (1)
     {
 	    for(int i=1; i<=128; i=i+i)
